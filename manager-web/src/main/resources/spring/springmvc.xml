@@ -21,6 +21,10 @@
             </list>
         </property>
     </bean>
+    <!-- Multipart解析器 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    </bean>
     <!-- 视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/><!-- jsp所在的前缀 -->
