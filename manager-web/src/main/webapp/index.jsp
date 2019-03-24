@@ -7,6 +7,19 @@
 <title>Insert title here</title>
 </head>
 <body>
+
+<%
+	Cookie [] cs = request.getCookies();
+	if(cs!=null){
+		for(Cookie c :cs){
+			out.print("key:"+c.getName()+",value:"+c.getValue()
+					+"<br/>");
+		}
+	}else{
+		out.println("没有 cookie");
+	}
+%>
+
 <form action="upload" method="post" enctype="multipart/form-data">
 	<input type="file" name="file"/><input type="submit" value="上传"/>
 </form>

@@ -17,12 +17,12 @@ public class UploadController {
 		try {
 			boolean result = uploadService.upload(file);
 			if(result){
-				return "/success.jsp";
-			}
+				return "ok";
+		}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "/error.jsp";
+		return "error";
 	}
 }
