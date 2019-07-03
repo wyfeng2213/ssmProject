@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+	    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <!-- 包的扫描器主要是扫描@controller -->
@@ -29,6 +35,30 @@
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/><!-- jsp所在的前缀 -->
         <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!-- 那些类下的方法需要参与到当前的事物管理中 。配置切点 -->
+    <aop:config>
+        <aop:advisor advice-ref="advice" pointcut="execution(* com.demo.service.*.*(..))"/>
+    </aop:config>
+
+    <!--开启aop , 对类进行代理-->
+    <aop:config proxy-target-class="true"/>
+    <!--开启shiro注解支持-->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"></property>
+    </bean>
+
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+    <props>
+    <!--认证异常 到登录页面去-->
+    <prop key="org.apache.shiro.authz.UnauthenticatedException">/login.jsp</prop>
+    <!--授权异常-->
+    <prop key="org.apache.shiro.authz.UnauthorizedException">ok</prop>
+    </props>
+    </property>
     </bean>
     <!-- 配置静态资源映射 -->
     <mvc:resources location="/WEB-INF/css/" mapping="/css/**"/>
