@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- Shiro 的Web过滤器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 2. 认证失败之后的处理 login默认地址 没有登录之后的操作 默认是根路径下的login.jsp , 也就是认证失败之后的处理
+                loginUrl认证提交地址，如果没有认证将会请求此地址进行认证，请求此地址将由formAuthenticationFilter进行表单认证 -->
+        <property name="loginUrl" value="/login"/>
+        <!-- 3. 成功认证默认地址 认证成功统一跳转到index.do，建议不配置，shiro认证成功自动到上一个请求路径 -->
+        <property name="successUrl" value="/index"/>
+        <!-- 4. 没有权限默认地址 通过unauthorizedUrl指定没有权限操作时跳转页面-->
+        <property name="unauthorizedUrl" value="/refuse.jsp"/>
+        <!-- 5 .过虑器链定义，从上向下顺序执行，一般将/**放在最下边 anon==> AnonymousFilter authc==>FormAuthenticationFilter
+            /css/**,/js/**,/fonts/**,/img/**,/druid/**
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- 1. /** = anon所有url都可以匿名访问  登录请求一定要弄成匿名的 不然会一直往登录页面走-->
+                /js/** = anon
+                /css/** = anon
+                /images/** = anon
+                /ico/** = anon
+                /plugins/** = anon
+                /themes/** = anon
+                /login.jsp=anon
+                /=anon
+                /toLogin=anon
+
+                /login=authcz
+                <!--3. 退出登录 org.apache.shiro.web.filter.authc.LogoutFilter-->
+                /logout=logout
+                <!--2.  /** = authc 所有url都必须认证通过才可以访问-->
+                /** = authc
+
+
+            </value>
+        </property>
+    </bean>
+    <bean id="logout" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+        <property name="redirectUrl" value="/toLogin"></property>
+    </bean>
+    <bean id="authc" class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter" >
+        <property name="usernameParam" value="name"/>
+        <property name="passwordParam" value="pwd"/>
+    </bean>
+    <!-- 6. securityManager安全管理器  把自定义的realm设置到securityManager-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="userRealm"/>
+    </bean>
+    <!-- realm -->
+    <bean id="userRealm" class="com.demo.realm.MyRealm">
+        <!--7.  将凭证匹配器设置到realm中，realm按照凭证匹配器的要求进行散列 -->
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+    <!-- 8. 凭证匹配器 -->
+    <bean id="credentialsMatcher"
+          class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="2"/>
+
+    </bean>
+</beans>
