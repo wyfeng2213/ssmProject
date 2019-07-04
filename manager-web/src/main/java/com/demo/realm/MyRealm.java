@@ -1,6 +1,7 @@
 package com.demo.realm;
 
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -36,6 +37,15 @@ public class MyRealm extends AuthorizingRealm {
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(username,
                 password, ByteSource.Util.bytes("siggy"), this.getName());
         return simpleAuthenticationInfo;
+    }
+    /**
+     * 清除权限缓存
+     * 使用方法：在需要清除用户权限的地方注入 ShiroRealm,
+     * 然后调用其clearCache方法。
+     */
+    public void clearCache() {
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        super.clearCache(principals);
     }
 }
 
