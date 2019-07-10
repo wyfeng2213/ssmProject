@@ -45,7 +45,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     public void clearCache() {
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
-        System.out.println("11111111111112222");
+        System.out.println("11111111111112222333333");
         super.clearCache(principals);
     }
 }
