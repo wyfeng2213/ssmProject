@@ -29,6 +29,8 @@ public class UserControl {
 
     @RequestMapping("/addUser")
     public String addUser() {
+        System.out.println("11111111111");
+        System.out.println("22222222222");
         Users users = new Users();
         users.setUsername("lisi");
         users.setUserage(25);
