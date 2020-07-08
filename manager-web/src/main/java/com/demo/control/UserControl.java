@@ -31,6 +31,7 @@ public class UserControl {
     public String addUser() {
         System.out.println("11111111111");
         System.out.println("22222222222");
+        System.out.println("33333333333");
         Users users = new Users();
         users.setUsername("lisi");
         users.setUserage(25);
